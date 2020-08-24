@@ -9,14 +9,16 @@ color = "black"
 eraser = "white"
 arr = [[0] * canvas_width for i in range(canvas_height)]
 
+
 def save(event):
-    binf = open("gir.txt", "wt")
-    i = 0
-    j = 0
+
+    bin_file = open("gir.txt", "w")
     for i in range(canvas_height):
         for j in range(canvas_width):
-            binf.write(str(arr[i][j]))
-    binf.close()
+            bin_file.write(str(arr[i][j]))
+        bin_file.write('\n')
+    bin_file.close()
+
 
 def paint(event):
     global brush_size
@@ -27,9 +29,12 @@ def paint(event):
     x2 = event.x
     y2 = event.y
     w.create_rectangle(x1, y1, x2, y2)
-    for i in range(x1, x2):
-        for j in range(y1, y2):
-            arr[i][j] = 1
+
+    try:
+        arr[y1][x1] = 1
+    except IndexError:
+        pass
+
 
 def erase(event):
     global eraser_size
@@ -38,10 +43,11 @@ def erase(event):
     y1 = event.y
     x2 = event.x
     y2 = event.y
-    w.create_rectangle(x1, y1, x2, y2, fill = "white", outline = "white")
+    w.create_rectangle(x1, y1, x2, y2, fill="white", outline="white")
     for i in range(x1, x2):
         for j in range(y1, y2):
             arr[i][j] = 0
+
 
 root = Tk()
 root.title("Paint")
@@ -51,8 +57,10 @@ w = Canvas(root, width=canvas_width, height=canvas_height, bg="white")
 w.bind("<B1-Motion>", paint)
 w.bind("<Button-1>", paint)
 w.bind("<B3-Motion>", erase)
-w.bind("<space>", save)
+save_button = Button(text='Save')
+
+save_button.bind("<Button-1>", save)
 
 w.pack()
-
+save_button.pack()
 root.mainloop()
